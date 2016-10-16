@@ -1,0 +1,85 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Exercise_02
+{
+    class Program
+    {
+        public class Coffee
+        {
+            //Declare the sizes
+            public enum Size
+            {
+                Small = 100,
+                Normal = 150,
+                Double = 300
+            }
+            //It is predifined. It cannot change
+            public Size Cafe { get; private set; }
+
+            //Constructor
+            public Coffee(Size s)
+            {
+                Cafe = s;
+            }
+
+            //Just return a formated string
+            public string PrintInfo()
+            {
+                return $"{Cafe} coffee is {(int)Cafe} ml.";
+            }
+        }
+
+        public class Order
+        {
+            //List containing items of type Coffee
+            private List<Coffee> items = new List<Coffee>();
+
+            //Function to add items into list
+            public void Add(Coffee coffee)
+            {
+                items.Add(coffee);
+            }
+
+            //Add all costs to the final sum
+            public double CalculateCost()
+            {
+                double cost = 0;
+                foreach (Coffee c in items)
+                {
+                    switch (c.Cafe)
+                    {
+                        case Coffee.Size.Small:
+                            cost += 0.5;
+                            break;
+                        case Coffee.Size.Normal:
+                            cost += 1.5;
+                            break;
+                        case Coffee.Size.Double:
+                            cost += 2.5;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return cost;
+            }
+        }
+
+        static void Main(string[] args)
+        {
+            Coffee c1 = new Coffee(Coffee.Size.Small);
+            Console.WriteLine(c1.PrintInfo());
+
+            Order order = new Order();
+            order.Add(c1);
+            order.Add(new Coffee(Coffee.Size.Double));
+            Console.WriteLine(order.CalculateCost());
+
+            Console.ReadKey();
+        }
+    }
+}
