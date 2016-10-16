@@ -1,0 +1,131 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace ConsoleApplication8
+{
+    public class Imaginary
+    {
+        private double x;
+        private double y;
+        public double R
+        { get { return x; }
+          set { x = value; }
+        }
+        public double I
+        {
+          get { return y; }
+          set { y = value; }
+        }
+
+        //We create the elements of the imaginary number
+        public Imaginary(double a, double b)
+        {
+            x = a;
+            y = b;
+        }
+
+
+        //We create a method which adds 2 imaginary numbers
+        public static Imaginary Add(Imaginary c, Imaginary d)
+        {
+            double e = c.R + d.R;
+            double f = c.I + d.I;
+            return new Imaginary(e, f);
+        }
+
+        //We create a method which subtracts 2 imaginary numbers
+        public static Imaginary Subtract(Imaginary c, Imaginary d)
+        {
+            double e = c.R - d.R;
+            double f = d.I - d.I;
+            return new Imaginary(e, f);
+        }
+        public Imaginary Add(Imaginary a)
+        {
+            double r = this.x + a.R;
+            double i = this.y + a.I;
+            Imaginary z = new Imaginary(r, i);
+            return z;
+        }
+
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("To create real number press 1");
+            Console.WriteLine("To create imaginary number press 2");
+
+            bool isValid = false;
+
+            while (!isValid)
+            {
+                int Rkey = Int32.Parse(Console.ReadLine());
+                switch (Rkey)
+                {
+                    case 1:
+                        Console.WriteLine("Give me the number");
+                        int Rkey1 = Int32.Parse(Console.ReadLine());
+                        Console.WriteLine("The real number is" + " " + Rkey1.ToString());
+                        isValid = true;
+                        break;
+
+                    case 2:
+                        Console.WriteLine("Give me the real part of the imaginary number");
+                        int Rkey2 = Int32.Parse(Console.ReadLine());
+
+                        Console.WriteLine("Give me the imaginary part of the imaginary number");
+                        int Rkey3 = Int32.Parse(Console.ReadLine());
+
+                        Imaginary img1 = new Imaginary(Rkey2, Rkey3);
+                        Console.WriteLine("Your imaginary number is");
+                        Console.WriteLine(Rkey2 + " " + " + " + Rkey3 + "*i");
+
+                        Console.WriteLine("Press 3 if you want to make and addition of imaginary numbers or 4 if you want to make a subtraction");
+
+                        bool isValid2 = false;
+
+                        while (!isValid2)
+                        {
+                            int Rkey4 = Int32.Parse(Console.ReadLine());
+                            switch (Rkey4)
+                            {   
+                            case 3:
+                                    Console.WriteLine("Give me the real part of second imaginary number for addition");
+                                    int Rkey5 = Int32.Parse(Console.ReadLine());
+                                    Console.WriteLine("Give me the imaginary part of second imaginary number for addition");
+                                    int Rkey6 = Int32.Parse(Console.ReadLine());
+
+                                    Console.WriteLine("The second Imaginary number is" + " " + Rkey5 + " " + "+ " + Rkey6 + "*i" + " " + "and the result is");
+                                    Console.WriteLine(Rkey2 + Rkey5 + " " + " + " + " " + (Rkey3 + Rkey6) + "*i");
+                                    isValid2 = true;
+                                break;
+                            case 4:
+                                    Console.WriteLine("Give me the real part of second imaginary number for subtraction");
+                                    int Rkey7 = Int32.Parse(Console.ReadLine());
+                                    Console.WriteLine("Give me the imaginary part of second imaginary number for subtraction");
+                                    int Rkey8 = Int32.Parse(Console.ReadLine());
+
+                                    Console.WriteLine("The second Imaginary number is" + " " + Rkey7 + " " + " - " + Rkey8 + "*i" + " " + "and the result is");
+                                    Console.WriteLine(Rkey2 + Rkey7 + " " + " - " + " " + (Rkey3 + Rkey8) + "*i");
+                                    isValid2 = true;
+                                break;
+                            default:
+                                Console.WriteLine("Give me a valid equation");
+                                break;
+                                }
+                         }
+                        break;
+                    default:
+                        Console.WriteLine("Please give me a valid key");
+                        break;
+                }
+            }
+        }
+    }
+}
