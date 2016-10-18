@@ -1,0 +1,172 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
+
+
+namespace ConsoleApplication12
+{
+    class Program
+    {
+        public class Maze
+        {
+            //We create a maze with size of our own choice
+            public static int size = 5;
+            public int[,] maze = new int[size, size];
+            public int _size
+            {
+                get { return size; }
+                set { size = value; }
+            }
+
+            //Create a default constructor to call new object in Main Void
+            public Maze() { }
+
+            //Create the steps for the iteration
+            public int movement_x = 0;
+            public int movement_y = 0;
+
+            //Create a counter that will prevent the person to move back to the same cells again
+            public int[,] count = new int[size, size];
+
+            //Create the movement of the person
+            public void Step(int x, int y)
+            {
+                ////We are moving to count[x + 1, y] if we have been there the least times
+                if (count[x - 1, y] > count[x, y - 1])
+                {
+                    if (count[x, y - 1] > count[x, y + 1])
+                    {
+                        if (count[x, y + 1] > count[x + 1, y])
+                        {
+                            if (x < size && maze[x + 1, y] != 0)
+                            {
+                                x += 1;
+                                movement_x = x;
+                                count[x, y] += 1;
+                            }
+                        }
+                    }
+                }
+
+                ////We are moving to count[x - 1, y] if we have been there the least times
+                if (count[x + 1, y] > count[x, y - 1])
+                {
+                    if (count[x, y - 1] > count[x, y + 1])
+                    {
+                        if (count[x, y + 1] > count[x - 1, y])
+                        {
+                            if (x < size && maze[x + 1, y] != 0)
+                            {
+                                x += 1;
+                                movement_x = x;
+                                count[x, y] += 1;
+                            }
+                        }
+                    }
+                }
+
+                ////We are moving to count[x, y + 1] if we have been there the least times
+                if (count[x - 1, y] > count[x, y - 1])
+                {
+                    if (count[x, y - 1] > count[x + 1, y])
+                    {
+                        if (count[x + 1, y] > count[x, y + 1])
+                        {
+                            if (x < size && maze[x + 1, y] != 0)
+                            {
+                                x += 1;
+                                movement_x = x;
+                                count[x, y] += 1;
+                            }
+                        }
+                    }
+                }
+
+                ////We are moving to count[x, y - 1] if we have been there the least times
+                if (count[x - 1, y] > count[x + 1, y])
+                {
+                    if (count[x + 1, y] > count[x, y + 1])
+                    {
+                        if (count[x, y + 1] > count[x, y - 1])
+                        {
+                            if (x < size && maze[x + 1, y] != 0)
+                            {
+                                x += 1;
+                                movement_x = x;
+                                count[x, y] += 1;
+                            }
+                        }
+                    }
+                }
+                if (count[x + 1, y] == count[x, y + 1])
+                {
+                    if (count[x, y + 1] == count[x, y - 1])
+                    {
+                        if (count[x, y - 1] == count[x - 1, y])
+                        {
+                            if (count[x - 1, y] == count[x + 1, y])
+                            {
+                                x += 1;
+                                movement_x = x;
+                            }
+                        }
+                    }
+                }
+             }
+          }
+        
+   
+
+        static void Main(string[] args)
+        {
+            Maze a = new Maze();
+            //Create the square with the passages. At first we consider all cells as passages and we implement them with the value 1.
+            for (int i = 0; i < a._size; i++)
+            {
+                for (int j = 0; j < a._size; j++)
+                {
+                    a.maze[i, j] = 1;
+                }
+            }
+
+            //Mountains creation with a delay so that the random engine gets us different randoms
+            for (int c = 0; c < 25; c++)
+            {
+                Random r1 = new Random();
+                Random r2 = new Random();
+                System.Threading.Thread.Sleep(100);
+                int Mountain_x = r1.Next(a._size);                
+                int Mountain_y = r2.Next(a._size);
+                a.maze[Mountain_x, Mountain_y] = 0;
+            }
+
+
+            //Call the Maze(int x, int y) constructor to create the moves until finish reached
+            do
+            {
+                a.Step(a.movement_x, a.movement_y);
+                System.Threading.Thread.Sleep(200);
+                Console.WriteLine(a.movement_x + " " + a.movement_y);
+            } while (a.movement_x != 4 & a.movement_y != 4);
+
+
+
+
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    for (int j = 0; j < 5; j++)
+            //    {
+            //        Console.WriteLine(a.maze[i, j]);
+            //    }
+            //}
+
+
+
+
+
+        }
+    }
+}
