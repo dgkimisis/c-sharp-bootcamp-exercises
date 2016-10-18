@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExerciseFraction
+{
+    class Program
+    {
+        public class Fraction : IComparable<Fraction>
+        {
+            private int _ari;
+            private int _par;
+
+            public int ari { get { return _ari; } set { _ari = value; } }
+            public int par { get { return _par; } set { if (value !=0 )  _par = value; } }
+
+            public string result
+            { get; set; }
+
+
+            public Fraction(int x, int y)
+            {
+                ari = x;
+                par = y;
+            }
+
+
+            //Ερώτημα 3
+            public override string ToString()
+            {
+                if (ari * par < 0)     
+                    return "The fraction is" + " "  + " - " + ari.ToString() + "/" + _par.ToString();          
+               else
+                    return "The fraction is" + " " + ari.ToString() + "/" + _par.ToString();
+            }
+
+            //Ερώτημα 4
+            //Πως το εκτυπώνουμε αυτό μέσα στο voi main
+            public static Fraction operator *(Fraction a, Fraction b)
+            {
+                int num1 = a.ari * b.ari;
+                int num2 = a.par * b.par;
+                return new Fraction(num1, num2);
+            }
+
+            public static Fraction operator *(int a, Fraction b)
+            {
+                int num1 = a * b.ari;
+                int num2 = b.par;
+                return new Fraction(num1, num2);
+            }
+
+            public static Fraction operator *(Fraction a, int b)
+            {
+                int num1 = a.ari * b;
+                int num2 = a.par;
+                return new Fraction(num1, num2);
+            }
+
+
+            //Ερώτημα 5
+            public static Fraction Parse(string str)
+            {
+                string[] split = str.Split('/');
+                if (split.Length != 2)
+                {
+                //throw Exception;
+                }
+                int a;
+                // H TryParse pροσπαθεί να βρεί εάν ένας αλφαριθμητικός χαρακρήρας μπορεί να μετατραπεί σε αριθμό
+                if (!Int32.TryParse(split[0], out a));
+                {
+                    //Throw Exception;
+                }
+
+                //To out b ουσιαστικά δίνει τη τιμή του split[1] στον ιnt b
+                int b;
+                if (!Int32.TryParse(split[1], out b));
+                {
+                    //Throw Exception;
+                }
+                return new Fraction(a, b);
+            }
+
+            //Ερώτημα 6
+            //Πως μπορώ να φτιάξω το decimal?
+
+         
+            decimal Decimal
+            {
+             get { return (decimal)(ari / par); }
+            }
+
+
+            //Ερώτημα 7
+
+         
+
+
+
+            public int CompareTo(Fraction other)
+            {
+                //return (this.Decimal.CompareTo(other.Decimal));
+                if (this.Decimal < other.Decimal)
+                {
+                    return -1;
+                }
+                else if (this.Decimal > other.Decimal)
+                {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+
+
+            //Ερώτημα 8
+
+            public void Cancel()
+            {
+                int min = Math.Min(this.ari, this.par);
+                for (int i = min; i >= 2; i--)
+                {
+                    if (this.ari % i == 0 && this.par % i == 0);
+                    this.ari /= i;
+                    this.par /= i; 
+                }
+            }
+        }
+
+
+        static void Main(string[] args)
+            {
+                Fraction number1 = new ExerciseFraction.Program.Fraction(1, 4);
+                Fraction number2 = new ExerciseFraction.Program.Fraction(1, 6);
+
+            Fraction c8 = Fraction.Parse("2/8");
+
+            List<Fraction> list = new List<Fraction>()
+            {
+                new Fraction(1, 2), new Fraction(3, 4) ,new Fraction(3, 9), new Fraction(2, 3), c8
+            };
+
+            Console.WriteLine("Before sort\n");
+
+            foreach(Fraction f in list)
+            {
+                Console.WriteLine(f);
+            }
+
+            list.Sort();
+            Console.WriteLine("After sort\n");
+            foreach (Fraction f in list)
+            {
+                Console.WriteLine(f);
+            }
+
+            
+            Console.WriteLine(c8 + " ==> ");
+            c8.Cancel();
+            Console.WriteLine(c8);
+
+        }
+     }
+}
