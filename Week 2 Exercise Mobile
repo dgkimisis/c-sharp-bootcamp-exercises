@@ -1,0 +1,301 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Mobile
+{
+    class Program
+    {
+    enum BatteryType
+    {
+        LithiumIon,
+        LithiumPolymer,
+        NickelCadmium,
+        NickelMetalHybride,
+        NewLithiumTechnology
+    }
+
+    class Battery
+    {
+        //private fields
+        private BatteryType type;
+        private int capacity;
+
+        //public Properties
+        public BatteryType Type
+        {
+            get { return type; }
+            private set { type = value; }
+        }
+        public int Capacity
+        {
+            get { return capacity; }
+            private set
+            {
+                if (value > 0 && value <= Int32.MaxValue)
+                {
+                    capacity = value;
+                }
+            }
+        }
+
+		//Constructor
+        public Battery(BatteryType type, int capacity)
+        {
+            Type = type;
+            Capacity = capacity;
+        }
+    }
+    
+    enum CallType
+	{
+		Incoming,
+		Outgoing
+	}
+
+	class Call
+	{
+		private DateTime startTime;
+		private DateTime endTime;
+		private CallType type;
+
+		public DateTime StartTime {
+			get
+			{
+				return startTime;
+			}
+		}
+
+		public DateTime EndTime
+		{
+			get
+			{
+				return endTime;
+			}
+		}
+
+		public double Duration
+		{
+			get
+			{
+				TimeSpan span = endTime - startTime;
+				return span.Seconds;
+			}
+		}
+
+		public CallType Type
+		{
+			get
+			{
+				return type;
+			}
+		}
+
+		public Call(CallType type)
+		{
+			this.startTime = DateTime.Now;
+			this.type = type;
+		}
+
+		public void End()
+		{
+			this.endTime = DateTime.UtcNow;
+		}
+	}
+  
+  public enum KnownModels
+	{
+		iPhone7,
+		SamsungGalaxyNote4,
+		AsusZenfone3,
+		Huawei
+	}
+
+	class Device
+    {
+
+        //private fields
+        private string model;
+        private string manufacturer;
+        private decimal basePrice;
+
+		public Screen Screen { get; private set; }
+		public Battery Battery { get; private set; }
+
+		public Usage Usage { get; private set; }
+
+        //public Properties
+        public string Model
+        {
+            get { return model; }
+            private set { model = value; }
+        }
+        public string Manufacturer
+        {
+            get { return manufacturer; }
+            private set { manufacturer = value; }
+        }
+        public decimal BasePrice
+        {
+            get { return basePrice; }
+            private set
+            {
+                if (value > 0)
+                {
+                    basePrice = value;
+                }
+            }
+        }
+        public string Name
+        {
+            get { return manufacturer + " " + model; }
+        }
+
+		//Constructors
+		public Device(string manufacturer, string model, decimal basePrice, Screen screen, Battery battery)
+		{
+			this.Manufacturer = manufacturer;
+			this.Model = model;
+			this.BasePrice = basePrice;
+			this.Screen = screen;
+			this.Battery = battery;
+			this.Usage = new Usage();
+		}
+
+		public static Device GetKnownModel(KnownModels model)
+		{
+			switch (model) {
+				case (KnownModels.AsusZenfone3):
+					return new Device("Asus", "Zenfone 3", 300,new Screen(new ScreenResolution(1920, 1200), 10.1), new Battery(BatteryType.LithiumPolymer, 8000));
+				case (KnownModels.iPhone7):
+					return new Device("Apple", "iPhone 7", 1200, new Screen(new ScreenResolution(640, 480), 5.5), new Battery(BatteryType.LithiumPolymer, 6500));
+				default:
+					return null;
+			}
+		}
+
+		public override string ToString()
+		{
+			string result = "";
+			result += this.manufacturer + " " + this.model;
+			return result;
+		}
+	}
+  
+   public struct ScreenResolution
+    {
+        public int Width { get; private set; }
+		public int Height { get; private set; }
+		
+		//Constructor
+		public ScreenResolution(int width, int height)
+		{
+			Width = width;
+			Height = height;
+		}
+
+		//static methods for creating common resolutions
+		public static ScreenResolution _1920x1080()
+		{
+			return new ScreenResolution(1920, 1080);
+		}
+		public static ScreenResolution _1280x720()
+		{
+			return new ScreenResolution(1280, 720);
+		}
+		public static ScreenResolution _1900x1200()
+		{
+			return new ScreenResolution(1900, 1200);
+		}
+	}
+
+    class Screen
+    {
+        public ScreenResolution Resolution { get; private set; }
+        public double DiagonalInches { get; private set; }
+		
+		//Constructor
+		public Screen(ScreenResolution resolution, double diagonal) {
+			Resolution = resolution;
+			DiagonalInches = diagonal;
+		}
+    }
+    
+    class Usage
+	{
+		private double batteryPercentage;
+		private List<Call> history;
+
+		public List<Call> History
+		{
+			get
+			{
+				return history;
+			}
+		}
+
+		public Usage( )
+		{
+			batteryPercentage = 100;
+			history = new List<Call>();
+		}
+
+		public void NewCall(CallType type)
+		{
+			history.Add(new Call(type));
+		}
+
+		public void EndCall()
+		{
+			history[history.Count - 1].End();
+		}
+
+		public override string ToString()
+		{
+			string result = "";
+			result += "Battery: " + batteryPercentage + "%\n";
+			result += "Call History:\n";
+			foreach (Call call in history) {
+				result += String.Format("Start: {0} | Duration {1} seconds\n", call.StartTime.ToString("MM/dd/yyyy HH:mm:ss"), call.Duration); 
+			}
+			return result;
+		}
+	}
+    
+     
+        static void Main(string[] args)
+        {
+            Screen screen1 = new Screen(ScreenResolution._1920x1080(), 7);
+			Battery battery1 = new Battery(BatteryType.LithiumIon, 8000);
+			Device device1 = new Device(
+				"Asus", 
+				"Zenfone 2", 
+				250, 
+				new Screen(ScreenResolution._1920x1080(), 7), 
+				battery1
+				);
+
+			Device device2 = Device.GetKnownModel(KnownModels.iPhone7);
+			Console.WriteLine(device2.BasePrice);
+			//device2.BasePrice = 100;
+
+			device1.Usage.NewCall(CallType.Incoming);
+			Console.WriteLine("Call Started...");
+			System.Threading.Thread.Sleep(5000);
+			device1.Usage.EndCall();
+			Console.WriteLine("Call Ended");
+			Console.WriteLine();
+
+			device1.Usage.NewCall(CallType.Outgoing);
+			Console.WriteLine("Call Started...");
+			System.Threading.Thread.Sleep(10000);
+			device1.Usage.EndCall();
+			Console.WriteLine("Call Ended");
+
+			Console.WriteLine(device1.Usage);
+			Console.ReadKey();
+		}  
+    }
+}
