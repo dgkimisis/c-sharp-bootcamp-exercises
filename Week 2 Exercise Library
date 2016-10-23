@@ -1,0 +1,257 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExerciseLibrary
+{
+	class Program
+	{
+  class Librarian
+	{
+		public string Name { get; set; }
+		public Library ManagedLibrary { get; private set; }
+
+		public Librarian (string name, Library library)
+		{
+			Name = name;
+			ManagedLibrary = library;
+		}
+
+		public void AddUser(User user)
+		{
+			ManagedLibrary.AddUser(user);
+		}
+
+		public bool RentBook(User user, Book book, out string reply)
+		{
+			if (ManagedLibrary.IsAuthorizedUser(user)) {
+				if(ManagedLibrary.RentBook(book)) {
+					reply = "Book rented successfully! Take care of your book.";
+					return true;
+				}
+				reply = "No copy available!";
+				return false;
+			}
+			reply = "You are not authorized to rent books from this library!";
+			return false ;
+		}
+
+	}
+  class Author
+	{
+		public string Name { get; private set; }
+
+		public Author(string name)
+		{
+			this.Name = name;
+		}
+
+		public override string ToString()
+		{
+			return Name;
+		}
+	}
+  
+  
+	class Book
+	{
+		public static int _ID = 0;
+
+		public string Title { get; private set; }
+		public Author Author { get; private set; }
+		public int ID { get; private set; }
+
+		public Book(string title, Author author)
+		{
+			this.Title = title;
+			this.Author = author;
+			this.ID = ++_ID;
+		}
+
+		public override string ToString()
+		{
+			return $"{this.Title} by {this.Author}";
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is Book)) {
+				return false;
+			}
+			return Equals(obj as Book);
+		}
+
+		public bool Equals(Book other)
+		{
+			if (this.ID == other.ID) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+		public static bool operator ==(Book book1, Book book2)
+		{
+			return book1.Equals(book2);
+		}
+
+		public static bool operator !=(Book book1, Book book2)
+		{
+			return !book1.Equals(book2);
+		}
+
+		public override int GetHashCode()
+		{
+			return ID.GetHashCode();
+		}
+	}
+  
+  class Library
+	{
+		//private struct BookAvailability holds information about availability of a book in this library
+		class BookAvailability
+		{
+			public int physicalCopies;
+			public int availableCopies;
+		}
+
+		private List<User> AuthorizedUsers;
+		private List<Book> books;
+		private List<BookAvailability> availability;
+
+		//private Dictionary<Book, BookAvailability> books = new Dictionary<Book, BookAvailability>();
+
+		public Library()
+		{
+			AuthorizedUsers = new List<User>();
+			books = new List<Book>();
+			availability = new List<BookAvailability>();
+		}
+
+		public bool IsAuthorizedUser(User user)
+		{
+			if (AuthorizedUsers.Contains(user)) {
+				return true;
+			}
+			return false;
+		}
+
+		public void AddUser(User user)
+		{
+			if (AuthorizedUsers.Contains(user)) {
+				return;
+			}
+			AuthorizedUsers.Add(user);
+		}
+
+		public void AddBook(Book book, int copies)
+		{
+			if (books.Contains(book)) {
+				int index = books.IndexOf(book);
+				availability[index].physicalCopies += copies;
+				availability[index].availableCopies += copies;
+				return;
+			}
+			books.Add(book);
+			availability.Add(new BookAvailability
+			{
+				availableCopies = copies,
+				physicalCopies = copies
+			});
+		}
+
+		public bool RentBook(Book book)
+		{
+			if (books.Contains(book)) {
+				int index = books.IndexOf(book);
+				availability[index].availableCopies -= 1;
+				return true;
+			}
+			else return false;
+		}
+		
+		public bool ReturnBook(Book book)
+		{
+			if (books.Contains(book)) {
+				int index = books.IndexOf(book);
+				availability[index].availableCopies += 1;
+				return true;
+			}
+			else return false;
+		}
+
+		public override string ToString()
+		{
+			string result = String.Format("{0, -40} | {1} \n\n", "Books", "Available Copies");
+			for (int i = 0; i < books.Count; i++) {
+				result += String.Format("{0, -40} | {1} / {2} \n", books[i], availability[i].availableCopies, availability[i].physicalCopies);
+			}
+			return result;
+		}
+	}
+  
+  class User
+	{
+		public static int _ID = 0;
+
+		public string Name { get; private set; }
+		public int ID { get; private set; }
+
+		public User(string name)
+		{
+			this.Name = name;
+			this.ID = ++_ID;
+		}
+
+		public override string ToString()
+		{
+			return $"{this.Name}";
+		}
+	}
+  
+		static void Main(string[] args)
+		{
+			List<Author> authors = new List<Author>
+			{
+				new Author("Tom Robbins"),
+				new Author("Nikos Kazatzakis")
+			};
+
+			List<Book> books = new List<Book>()
+			{
+				new Book("To aroma tou oneirou", authors[0]),
+				new Book("Ta 7 pepla", authors[0]),
+				new Book("Kapetan Mixalis", authors[1])
+			};
+
+			Library library = new Library();
+
+			library.AddBook(books[0], 10);
+			library.AddBook(books[2], 5);
+
+			User user1 = new User("Maria");
+			User user2 = new User("Kostas");
+
+			Librarian librarian = new Librarian("Takis", library);
+
+			librarian.AddUser(user1);
+
+			string reply;
+			librarian.RentBook(user1, books[0], out reply);
+			Console.WriteLine(reply);
+			librarian.RentBook(user1, books[2], out reply);
+			Console.WriteLine(reply);
+			librarian.RentBook(user1, books[1], out reply);
+			Console.WriteLine(reply);
+			librarian.RentBook(user2, books[0], out reply);
+			Console.WriteLine(reply);
+
+			Console.WriteLine(library);
+
+			Console.ReadKey();
+		}
+	}
+}
